@@ -1,0 +1,69 @@
+<!-- Assignment Content Page -->
+<!-- Student's Name: Amisha Kandi -->
+<!-- Student's UCSC Email: akandi@ucsc.edu -->
+<!-- Notes to Grader: N/A -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8" />
+   <title> ASG0: Amisha Kandi</title>
+</head>
+
+<body onload="main()">
+   <!-- Create a canvas (400x400) Note: size and origin -->
+   <canvas id="asg0" width="400" height="400">
+      Please use a browser that supports "canvas"
+   </canvas>
+
+   <br>
+
+   <script src="asg0.js"></script>
+   <script src="lib/cuon-matrix-cse160.js"></script>
+
+   <br>
+   <label for="v1">v1:</label>
+       <label for="v1:x">x</label>
+           <input type="text" id="v1_x" name="v1-x"
+               required minlength="4" maxlength="8" size="14">
+
+       <label for="v1:y">y</label>
+           <input type="text" id="v1_y" name="v1-y"
+               required minlength="4" maxlength="8" size="14">
+   <br>
+
+   <label for="v2">v2:</label>
+       <label for="v2:x">x</label>
+           <input type="text" id="v2_x" name="v2-x"
+               required minlength="4" maxlength="8" size="14">
+
+       <label for="v2:y">y</label>
+           <input type="text" id="v2_y" name="v2-y"
+               required minlength="4" maxlength="8" size="14">
+   <br>
+
+   <button onclick="handleDrawEvent()">Draw</button>
+   <br> <br>
+
+   <label for="opt">Operation: </label>
+   <select id="opt">
+     <option value="Add">Add</option>
+     <option value="Subtract">Subtract</option>
+     <option value="Multiply">Multiply</option>
+     <option value="Divide">Divide</option>
+     <option value="Mag">Magnitude</option>
+     <option value="Norm">Normalize</option>
+     <option value="Ang">Angle Between</option>
+     <option value="Area">Area</option>
+   </select>
+
+   <label for="opt">Scalar: </label>
+   <input type="text" id="scalar" name="scalar">
+   <br>
+
+   <button onclick="handleDrawOperationEvent()">Draw</button>
+
+   
+</body>
+</html>
