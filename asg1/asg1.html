@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Draw a point (1)</title>
+    <title>Amisha Kandi CSE160 Assignment 1</title>
   </head>
 
   <body onload="main()">
@@ -12,27 +12,22 @@
 
     <div id="performanceDisplay"></div>
     <br>
-    <button type="button" id = "clearButton">Clear</button>
-    <br>
-    <br>Shape:<br>
-
-    <button type="button" id = "pointButton">Point</button>
-    <button type="button" id = "triButton">Triangle</button>
-    <button type="button" id = "circButton">Circle</button>
+    <button type="button" id = "clearButton">Clear Canvas</button>
     <br>
 
-    <br> Color Scale: <br>
-    
+    <br>Drawing Mode:<br>
+    <button type="button" id = "pointButton">Squares</button>
+    <button type="button" id = "triButton">Triangles</button>
+    <button type="button" id = "circButton">Circles</button>
+    <br>
+
+    <br> Shape Color: <br>
     Red <input type="range" min="0" max="255" value="0" class="slider" id="redSlide">
-    <br> 
     Green <input type="range" min="0" max="255" value="0" class="slider" id="greenSlide">
-    <br>
     Blue <input type="range" min="0" max="255" value="0" class="slider" id="blueSlide">
-    <br>
-    <br> Other: <br>
-    Size <input type="range" min="5" max="40" value="5" class="slider" id="sizeSlide">
-    <br>
-    Segment Count (Circles): <input type="range" min="3" max="50" value="3" class="slider" id="segmentCount">
+    <br><br>
+    Shape Size: <input type="range" min="5" max="40" value="5" class="slider" id="sizeSlide">
+    (Circles) Segment Count: <input type="range" min="3" max="50" value="3" class="slider" id="segmentCount">
 
 
     <script src="lib/webgl-utils.js"></script>
