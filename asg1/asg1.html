@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Draw a point (1)</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <div id="performanceDisplay"></div>
+    <br>
+    <button type="button" id = "clearButton">Clear</button>
+    <br>
+    <br>Shape:<br>
+
+    <button type="button" id = "pointButton">Point</button>
+    <button type="button" id = "triButton">Triangle</button>
+    <button type="button" id = "circButton">Circle</button>
+    <br>
+
+    <br> Color Scale: <br>
+    
+    Red <input type="range" min="0" max="255" value="0" class="slider" id="redSlide">
+    <br> 
+    Green <input type="range" min="0" max="255" value="0" class="slider" id="greenSlide">
+    <br>
+    Blue <input type="range" min="0" max="255" value="0" class="slider" id="blueSlide">
+    <br>
+    <br> Other: <br>
+    Size <input type="range" min="5" max="40" value="5" class="slider" id="sizeSlide">
+    <br>
+    Segment Count (Circles): <input type="range" min="3" max="50" value="3" class="slider" id="segmentCount">
+
+
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix-cse160.js"></script>
+    <script src="helper/Point.js"></script>
+    <script src="helper/Triangle.js"></script>
+    <script src="helper/Circle.js"></script>
+    <script src="asg1.js"></script>
+  </body>
+</html>
