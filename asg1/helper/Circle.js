@@ -5,31 +5,41 @@ class Circle {
       this.color = [1.0, 1.0, 1.0, 1.0];
       this.size = 5.0;
       this.segments = 10;
+      this.rotation = 0;    
    }
 
    render() {
-      var xy = this.position;
-      var rgba = this.color;
-      var size = this.size;
-   
-      // Pass the color of a point to u_FragColor variable
+      const [cx, cy] = this.position;
+      const rgba = this.color;
+      const size = this.size;
+      const seg = this.segments;
+      const rot = this.rotation;
+  
       gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
-   
-      // Draw
-      var delta = this.size/200.0;
-
-      let angle_iteration = 360.0/this.segments;
-
-      for(var angle = 0; angle < 360; angle+=angle_iteration ) {
-         let centerPT = [xy[0], xy[1]];
-         let angle1 = angle;
-         let angle2 = angle + angle_iteration;
-         let vector1 = [delta * Math.cos(angle1*Math.PI/180)/2, delta * Math.sin(angle1*Math.PI/180)/2];
-         let vector2 = [delta * Math.cos(angle2*Math.PI/180)/2, delta * Math.sin(angle2*Math.PI/180)/2];
-         let pt1 = [centerPT[0] + vector1[0], centerPT[1] + vector1[1]];
-         let pt2 = [centerPT[0] + vector2[0], centerPT[1] + vector2[1]];
-
-         drawTriangle([xy[0], xy[1], pt1[0], pt1[1], pt2[0], pt2[1]]);
+  
+      const radius = size/200.0/2;
+      const step = 360.0 / seg;
+  
+      for (let a = 0; a < 360; a += step) {
+        const a1 = a * Math.PI/180, a2 = (a + step) * Math.PI/180;
+        const p1 = [cx + Math.cos(a1)*radius, cy + Math.sin(a1)*radius];
+        const p2 = [cx + Math.cos(a2)*radius, cy + Math.sin(a2)*radius];
+  
+        // rotate both points around the center by rotation value
+        const rp1 = rotatePoint(p1, [cx,cy], rot);
+        const rp2 = rotatePoint(p2, [cx,cy], rot);
+  
+        drawTriangle([cx, cy, rp1[0], rp1[1], rp2[0], rp2[1]]);
       }
    }
 }
+
+function rotatePoint([x,y], [cx,cy], deg) {
+   const rad = deg * Math.PI/180;
+   const cos = Math.cos(rad), sin = Math.sin(rad);
+   const dx  = x - cx, dy = y - cy;
+   return [
+     cx + dx*cos - dy*sin,
+     cy + dx*sin + dy*cos
+   ];
+ }

@@ -6,13 +6,31 @@
   </head>
 
   <body onload="main()">
-    <canvas id="webgl" width="400" height="400">
-    Please use a browser that supports "canvas"
-    </canvas>
+    Notes to Grader:
+    <ul>
+      <li>There are two extra components. There is a rotation slider that rotates all the shapes from 0 to 360 degrees. I did have to get help from ChatGPT with some of the 
+        rotation code changes in regards to the render functions for each shape and I watched some youtube videos to help create the rotation function. I also created a LineSeg
+        class that was not an extensive change from the basic Point class but I used gl.LINES so that whenever the user drags their mouse, there is no gap and a line always persists.
+      </li>
+      </li>
+      <li>To see the drawn picture, click the "Generate Drawing" button. This is supposed to be a butterfly as shown with the reference image on the side.</li>
+    </ul>
+    <div id="canvasContainer" style="display:flex; align-items:flex-start;">
+      <canvas id="webgl" width="400" height="400">
+        Please use a browser that supports "canvas"
+      </canvas>
+      <img
+        id="referenceImage"
+        src="drawing.jpg"
+        alt="My Drawing"
+        style="display:none; max-width:400px; margin-left:10px;"
+      />
+    </div>
 
     <div id="performanceDisplay"></div>
     <br>
     <button type="button" id = "clearButton">Clear Canvas</button>
+    <button type="button" id = "generateDrawing">Generate Drawing</button>
     <br>
 
     <br>Drawing Mode:<br>
@@ -28,6 +46,13 @@
     <br><br>
     Shape Size: <input type="range" min="5" max="40" value="5" class="slider" id="sizeSlide">
     (Circles) Segment Count: <input type="range" min="3" max="50" value="3" class="slider" id="segmentCount">
+    <br>
+
+    <br>Extra:
+    <label for="rotationSlide">
+      Rotation (0°- 360°) <span id="rotationValue"></span>
+    </label>
+    <input type="range" id="rotationSlide" min="0" max="360" value="0">
 
 
     <script src="lib/webgl-utils.js"></script>
@@ -37,6 +62,7 @@
     <script src="helper/Point.js"></script>
     <script src="helper/Triangle.js"></script>
     <script src="helper/Circle.js"></script>
+    <script src="helper/LineSeg.js"></script>
     <script src="asg1.js"></script>
   </body>
 </html>
