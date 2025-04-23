@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Amisha Kandi - Blocky Dog</title>
+  <style>
+    html, body { margin: 0; padding: 0; font-family: sans-serif; }
+
+    .main-container { display: flex; }
+    .canvas-container { display: flex; flex-direction: column; }
+    .canvas-container canvas { width: 600px; height: 600px; display: block; }
+    .ui { width: 280px; margin-left: 20px; }
+    .control-group { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; }
+    input[type=range] { width: 100%; }
+    button { width: 100%; margin-top: 10px; padding: 8px; }
+
+    .notes-container {
+      padding: 8px;
+      border-top: 1px solid #ccc;
+      width: 600px;
+      box-sizing: border-box;
+    }
+    .notes-container p { margin: 0 0 8px; font-weight: bold; }
+    .notes-container ul { margin: 0; padding-left: 20px; }
+    .notes-container li { margin-bottom: 4px; }
+  </style>
+</head>
+<body onload="main()">
+  <div class="main-container">
+    <div id="canvas-container" class="canvas-container">
+      <canvas id="webgl" width="600" height="600">Your browser doesn't support canvas</canvas>
+      <div id="performanceDisplay"
+         style="margin-top:8px; text-align:center; font-family:monospace">
+      </div>
+      <div class="notes-container">
+        <p>Notes to grader:</p>
+        <ul>
+          <li>Click the canvas and drag the mouse for camera angle controls</li>
+          <li>Using pyramids to draw the ears</li>
+          <li>Shift Mode modifies head behavior on shift-click.</li>
+          <li>Used ChatGPT to help with the UI of the screen</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ui">
+      <div class="control-group">
+        <label for="angleSlide">Camera Angle</label>
+        <input type="range" id="angleSlide" min="0" max="360" value="30">
+      </div>
+      <div class="control-group">
+        <label for="headYaw">Head Turn</label>
+        <input type="range" id="headYaw" min="-45" max="45" value="0">
+      </div>
+      <!-- Leg controls (full functionality retained) -->
+      <fieldset class="control-group">
+        <legend>Front-Left Leg</legend>
+        <label for="flUpper">Upper</label>
+        <input type="range" id="flUpper" min="0" max="45" value="10">
+        <label for="flLower">Knee</label>
+        <input type="range" id="flLower" min="-30" max="10" value="0">
+      </fieldset>
+      <fieldset class="control-group">
+        <legend>Front-Right Leg</legend>
+        <label for="frUpper">Upper</label>
+        <input type="range" id="frUpper" min="0" max="45" value="10">
+        <label for="frLower">Knee</label>
+        <input type="range" id="frLower" min="-30" max="10" value="0">
+      </fieldset>
+      <fieldset class="control-group">
+        <legend>Back-Left Leg</legend>
+        <label for="blUpper">Upper</label>
+        <input type="range" id="blUpper" min="0" max="45" value="-20">
+        <label for="blLower">Knee</label>
+        <input type="range" id="blLower" min="-30" max="10" value="40">
+      </fieldset>
+      <fieldset class="control-group">
+        <legend>Back-Right Leg</legend>
+        <label for="brUpper">Upper</label>
+        <input type="range" id="brUpper" min="0" max="45" value="-20">
+        <label for="brLower">Knee</label>
+        <input type="range" id="brLower" min="-30" max="10" value="40">
+      </fieldset>
+      <button id="toggle-animation">Toggle Animation</button>
+      <button id="toggle-shift">Toggle Shift Mode</button>
+    </div>
+  </div>
+
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/webgl-debug.js"></script>
+  <script src="lib/cuon-utils.js"></script>
+  <script src="lib/cuon-matrix-cse160.js"></script>
+  <script src="helper/Triangle.js"></script>
+  <script src="helper/Cube.js"></script>
+  <script src="helper/Pyramid.js"></script>
+  <script src="asg2.js"></script>
+</body>
+</html>
