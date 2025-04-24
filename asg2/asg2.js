@@ -170,10 +170,14 @@ function updateAnimationAngles() {
     const w = g_seconds * 3.3;
   
     /* idle walk */
-    g_flUpper =  15 * Math.sin(w);  g_flLower = 25 * Math.sin(w);
-    g_frUpper = -15 * Math.sin(w);  g_frLower = -25 * Math.sin(w);
-    g_blUpper = -10 * Math.sin(w);  g_blLower = 20 * Math.sin(w);
-    g_brUpper =  10 * Math.sin(w);  g_brLower = -20 * Math.sin(w);
+    g_flUpper =  15 * Math.sin(w);  
+    g_flLower = 25 * Math.sin(w);
+    g_frUpper = -15 * Math.sin(w);  
+    g_frLower = -25 * Math.sin(w);
+    g_blUpper = -10 * Math.sin(w);  
+    g_blLower = 20 * Math.sin(w);
+    g_brUpper =  10 * Math.sin(w);  
+    g_brLower = -20 * Math.sin(w);
     g_tailBase = 15 * Math.sin(w);      
     g_earTilt  =  8 * Math.sin(w * 1.7);
   
@@ -182,10 +186,14 @@ function updateAnimationAngles() {
       const wig = 20 * Math.sin(w * 5); //paw wiggle
       g_cameraAngleX = 90;
   
-      g_flUpper = 60 + wig;   g_flLower = -wig;
-      g_frUpper = 60 - wig;   g_frLower =  wig;
-      g_blUpper = 60 - wig;   g_blLower = -wig;
-      g_brUpper = 60 + wig;   g_brLower =  wig;
+      g_flUpper = 60 + wig;   
+      g_flLower = -wig;
+      g_frUpper = 60 - wig;   
+      g_frLower =  wig;
+      g_blUpper = 60 - wig;  
+      g_blLower = -wig;
+      g_brUpper = 60 + wig;
+      g_brLower =  wig;
   
       g_tailBase = 0;
       g_earTilt  = 0;
