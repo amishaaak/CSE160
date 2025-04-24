@@ -37,8 +37,9 @@
         <p>Notes to grader:</p>
         <ul>
           <li>Click the canvas and drag the mouse for camera angle controls</li>
-          <li>Using pyramids to draw the ears</li>
-          <li>Shift Mode modifies head behavior on shift-click.</li>
+          <li>Using pyramids to draw the ears which are the third joints controlled by the Ear Tilt slider</li>
+          <li>Shift mode turns the dog on its back and waves its paws fast</li>
+          <li>Total of 18 parts as each leg has 3 parts</li>
           <li>Used ChatGPT to help with the UI of the screen</li>
         </ul>
       </div>
@@ -52,34 +53,37 @@
         <label for="headYaw">Head Turn</label>
         <input type="range" id="headYaw" min="-45" max="45" value="0">
       </div>
-      <!-- Leg controls (full functionality retained) -->
+      <div class="control-group">
+        <label for="earTilt">Ear Tilt</label>
+        <input type="range" id="earTilt" min="-40" max="40" value="0">
+      </div>
       <fieldset class="control-group">
-        <legend>Front-Left Leg</legend>
+        <legend>Front-Right Leg</legend>
         <label for="flUpper">Upper</label>
-        <input type="range" id="flUpper" min="0" max="45" value="10">
+        <input type="range" id="flUpper" min="0" max="45" value="0">
         <label for="flLower">Knee</label>
         <input type="range" id="flLower" min="-30" max="10" value="0">
       </fieldset>
       <fieldset class="control-group">
-        <legend>Front-Right Leg</legend>
+        <legend>Front-Left Leg</legend>
         <label for="frUpper">Upper</label>
-        <input type="range" id="frUpper" min="0" max="45" value="10">
+        <input type="range" id="frUpper" min="0" max="45" value="0">
         <label for="frLower">Knee</label>
         <input type="range" id="frLower" min="-30" max="10" value="0">
       </fieldset>
       <fieldset class="control-group">
-        <legend>Back-Left Leg</legend>
+        <legend>Back-Right Leg</legend>
         <label for="blUpper">Upper</label>
-        <input type="range" id="blUpper" min="0" max="45" value="-20">
+        <input type="range" id="blUpper" min="0" max="45" value="0">
         <label for="blLower">Knee</label>
-        <input type="range" id="blLower" min="-30" max="10" value="40">
+        <input type="range" id="blLower" min="-30" max="10" value="0">
       </fieldset>
       <fieldset class="control-group">
-        <legend>Back-Right Leg</legend>
+        <legend>Back-Left Leg</legend>
         <label for="brUpper">Upper</label>
-        <input type="range" id="brUpper" min="0" max="45" value="-20">
+        <input type="range" id="brUpper" min="0" max="45" value="0">
         <label for="brLower">Knee</label>
-        <input type="range" id="brLower" min="-30" max="10" value="40">
+        <input type="range" id="brLower" min="-30" max="10" value="0">
       </fieldset>
       <button id="toggle-animation">Toggle Animation</button>
       <button id="toggle-shift">Toggle Shift Mode</button>
