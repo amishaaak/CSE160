@@ -85,6 +85,7 @@ var g_cameraAngleX = 0.0;
 
 //Body parts
 let g_headYaw = 0;
+let g_neckYaw = 0;
 let g_flUpper = 0; 
 let g_flLower = 0;  
 let g_frUpper = 0;
@@ -116,6 +117,7 @@ function addActionsForHtmlUI() {
     //Slider controls
     document.getElementById('angleSlide').addEventListener('mousemove', function() {g_cameraAngleY = this.value; renderAllShapes();});
     document.getElementById('headYaw').addEventListener('mousemove', function() {g_headYaw = this.value; renderAllShapes();});
+    document.getElementById('neckYaw').addEventListener('input', function () {g_neckYaw = this.value;renderAllShapes();});
     document.getElementById('earTilt').addEventListener('mousemove', function() {g_earTilt = this.value; renderAllShapes();});
 
     //Body slider controls 
@@ -222,39 +224,44 @@ function renderAllShapes(){
     torso.render();
 
     /* ---------- head area ---------- */
+
+    const neckBase = new Matrix4();
+    neckBase.translate(-0.058, -0.05, 0.15);
+    neckBase.rotate(-10,0,0,1);
+    neckBase.rotate(g_neckYaw, 0,1,0);
     var neck = new Cube();
     neck.color = [0.431, 0.247, 0.122, 1]; 
-    neck.matrix.translate(-0.058, -0.05, 0.15);
-    neck.matrix.rotate(-10,0,0,1);
-    neck.matrix.rotate(g_headYaw, 0,1,0);
+    neck.matrix = new Matrix4(neckBase);
     neck.matrix.scale(0.25, 0.39, 0.20);
     neck.render();
 
     var head = new Cube();
     head.color = [0.49, 0.302, 0.173, 1];
-    head.matrix.translate(-0.008, 0.332, 0.115);
+    head.matrix = new Matrix4(neckBase)
+    head.matrix.translate(-0.03, 0.32, -0.038);
     head.matrix.rotate(-11,0,0,1);
     head.matrix.rotate(g_headYaw, 0,1,0);
-    var head_mat = new Matrix4(head.matrix);
     head.matrix.scale(0.38, 0.23, 0.26);
     head.render();
+
+    var head_mat = new Matrix4(head.matrix);
 
     var e1 = new Pyramid();
     e1.color = [0.361, 0.224, 0.031,1];
     e1.matrix = new Matrix4(head_mat);
-    e1.matrix.translate(0.004,0.24,0.15);
+    e1.matrix.translate(0.01,1.05,0.9);
     e1.matrix.rotate(-10,0,0,1);
     e1.matrix.rotate(g_earTilt, 1,0,0);
-    e1.matrix.scale(0.11, 0.11, 0.13);
+    e1.matrix.scale(0.38, 0.38, 0.42);
     e1.render();
 
     var e2 = new Pyramid();
     e2.color = [0.361, 0.224, 0.031, 1];
     e2.matrix = new Matrix4(head_mat);
-    e2.matrix.translate(0.003, 0.24, 0.10);
+    e2.matrix.translate(0.01, 1.05, 0.10);
     e2.matrix.rotate(-10, 0, 0, 1);       
     e2.matrix.rotate(-g_earTilt, 1, 0, 0);  
-    e2.matrix.scale(0.11, 0.11, -0.13);
+    e2.matrix.scale(0.38, 0.38, -0.42);
     e2.render();
 
     /* ---------- tail ---------- */
