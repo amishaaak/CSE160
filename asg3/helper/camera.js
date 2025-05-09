@@ -13,55 +13,68 @@ class Camera {
         this.projectionMatrix = new Matrix4();
         this.projectionMatrix.setPerspective(this.fov, canvas.width/canvas.height, 0.1, 1000);
 
-        this.speed = 0.045;
+        this.speed = 0.05;
     }
 
+    isBlocked(worldX, worldZ) {
+        const s = this.world.voxel;
+        const half = (this.world.grid * s) / 2;
+        const vx   = Math.floor((worldX + half) / s);
+        const vz   = Math.floor((worldZ + half) / s);
+        return this.world.blocks[vx][vz][0] === 1;
+    }
+    
     moveForward() {
         let forward = new Vector3();
-        forward.set(this.at);
-        forward.sub(this.eye);
-        forward.normalize();
-        forward.mul(this.speed);
+        forward.set(this.at).sub(this.eye).normalize().mul(this.speed);
 
+        let nx = this.eye.elements[0] + forward.elements[0];
+        let nz = this.eye.elements[2] + forward.elements[2];
+
+        if (!this.isBlocked(nx, nz)) {
         this.eye.add(forward);
         this.at.add(forward);
+        }
     }
 
     moveBackward() {
-        let back = new Vector3();
-        back.set(this.eye);
-        back.sub(this.at);
-        back.normalize();
-        back.mul(this.speed);
+        let backward = new Vector3();
+        backward.set(this.eye).sub(this.at).normalize().mul(this.speed);
 
-        this.eye.add(back);
-        this.at.add(back);
+        let nx = this.eye.elements[0] + backward.elements[0];
+        let nz = this.eye.elements[2] + backward.elements[2];
+
+        if (!this.isBlocked(nx, nz)) {
+        this.eye.add(backward);
+        this.at.add(backward);
+        }
     }
 
     moveLeft() {
-        let left = new Vector3();
-        left.set(this.at);
-        left.sub(this.eye);
+        // compute left = cross(up, forward)
+        let forward = new Vector3().set(this.at).sub(this.eye);
+        let left    = Vector3.cross(this.up, forward).normalize().mul(this.speed);
 
-        let s = Vector3.cross(this.up, left);
-        s.normalize();
-        s.mul(this.speed);
+        let nx = this.eye.elements[0] + left.elements[0];
+        let nz = this.eye.elements[2] + left.elements[2];
 
-        this.eye.add(s);
-        this.at.add(s);
+        if (!this.isBlocked(nx, nz)) {
+        this.eye.add(left);
+        this.at.add(left);
+        }
     }
-    
+        
     moveRight() {
-        let right = new Vector3();
-        right.set(this.at);
-        right.sub(this.eye);
+        let forward = new Vector3().set(this.at).sub(this.eye);
+        let right   = Vector3.cross(forward, this.up).normalize().mul(this.speed);
 
-        let s = Vector3.cross(right, this.up);
-        s.normalize();
-        s.mul(this.speed);
+        let nx = this.eye.elements[0] + right.elements[0];
+        let nz = this.eye.elements[2] + right.elements[2];
 
-        this.eye.add(s);
-        this.at.add(s);
+        if (!this.isBlocked(nx, nz)) {
+        this.eye.add(right);
+        this.at.add(right);
+        }
     }
 
     panLeft(alpha) {
@@ -94,48 +107,25 @@ class Camera {
         this.at.add(pR_prime);
     }
 
-    // panUp(alpha) {
-    //     if(this.at.elements[1] - this.eye.elements[1] > 0.99 && alpha < 0) return;
+    panUp(alpha) { //also handles the panDown situation 
+        if(this.at.elements[1] - this.eye.elements[1] > 1.00 && alpha < 0) return;
+        if(this.at.elements[1] - this.eye.elements[1] < -1.00 && alpha > 0) return;
+
+        let pU = new Vector3(); //current look direction which is at - eye
+        pU.set(this.at);
+        pU.sub(this.eye);
         
-    //     if(this.at.elements[1] - this.eye.elements[1] < -0.99 && alpha > 0) return;
-    //     let pU = new Vector3();
-    //     pU.set(this.at);
-    //     pU.sub(this.eye);
-        
-    //     // vector is orthogonal to f and up, aka it points up
-    //     let s = Vector3.cross(pU, this.up);
-    //     s.normalize();
+        //computing the camera’s local right axis, which is the axis needed to pitch around when looking up or down
+        let s = Vector3.cross(pU, this.up);
+        s.normalize();
 
-    //     let rotationMatrix = new Matrix4();
-    //     rotationMatrix.setRotate(-alpha, s.elements[0], s.elements[1], s.elements[2]);
+        let rotationMatrix = new Matrix4();
+        rotationMatrix.setRotate(-alpha, s.elements[0], s.elements[1], s.elements[2]); // rotates the forward vector by –alpha degrees about the side axis s
 
-    //     let pU_prime = rotationMatrix.multiplyVector3(pU);
-    //     pU_prime.normalize();
+        let pU_prime = rotationMatrix.multiplyVector3(pU);
+        pU_prime.normalize();
 
-    //     this.at.set(this.eye);
-    //     this.at.add(pU_prime);
-    // }
-
-    // panDown() {
-    //     let pD = new Vector3();
-    //     pD.set(this.at);
-    //     pD.sub(this.eye);
-        
-    //     // vector is orthogonal to f and up, aka it points up
-    //     let s = Vector3.cross(pD, this.up);
-    //     s.normalize();
-
-    //     let rotationMatrix = new Matrix4();
-    //     rotationMatrix.setRotate(alpha, s.elements[0], s.elements[1], s.elements[2]);
-
-    //     let pD_prime = rotationMatrix.multiplyVector3(pD);
-    //     pD_prime.normalize();
-
-    //     this.at.set(this.eye);
-    //     this.at.add(pD_prime);
-    // }
-
-    // mousePan(dX, dY) {
-    //     this.panRight(dX);
-    // }
+        this.at.set(this.eye);
+        this.at.add(pU_prime);
+    }
 }

@@ -24,6 +24,8 @@ var FSHADER_SOURCE = `
 
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
+  uniform sampler2D u_Sampler2;
+  uniform sampler2D u_Sampler3;
 
   uniform int u_textureNum;
 
@@ -37,6 +39,12 @@ var FSHADER_SOURCE = `
     } else if(u_textureNum == 3) {        
       gl_FragColor = texture2D(u_Sampler1, v_UV);     //use texture 1
     }
+    else if (u_textureNum == 4) {
+      gl_FragColor = texture2D(u_Sampler2, v_UV);    //use texture 2
+    }  
+    else if (u_textureNum == 5) {
+      gl_FragColor = texture2D(u_Sampler3, v_UV);    //use texture 3
+    }  
   }`
 
 // global vars
@@ -55,9 +63,11 @@ let world;
 
 let u_Sampler0;
 let u_Sampler1;
+let u_Sampler2;
+let u_Sampler3;
 
 let u_textureNum;
-let u_texColorWeight;
+//let u_texColorWeight;
 
 let g_cameraAngleX = 0;
 let g_cameraAngleY = 0;
@@ -139,6 +149,18 @@ function connectVariablesToGLSL() {
     return false;
   }
 
+  u_Sampler2 = gl.getUniformLocation(gl.program, 'u_Sampler2');
+  if(!u_Sampler2) {
+    console.log('Failed to create sampler object');
+    return false;
+  }
+
+  u_Sampler3 = gl.getUniformLocation(gl.program, 'u_Sampler3');
+  if(!u_Sampler3) {
+    console.log('Failed to create sampler object');
+    return false;
+  }
+
   u_textureNum = gl.getUniformLocation(gl.program, 'u_textureNum');
   if(!u_textureNum) {
     console.log('Failed to create texture option object');
@@ -147,9 +169,26 @@ function connectVariablesToGLSL() {
 
   let x = new Matrix4();
   camera = new Camera();
-  camera.eye = new Vector3([0, 0, 3]);
-  camera.at = new Vector3([0, 0, -100]);
+  // camera.eye = new Vector3([0, 0.3, 3]);
+  // camera.at = new Vector3([0, 0.3, 0]);
+  //camera.up = new Vector3([0, 1, 0]);
+  world = new World();
+  camera.world = world;
+
+  const s    = world.voxel;               // 0.5 m
+  const half = (world.grid * s) / 2;      // 16 m/2
+  const { x: vx, z: vz } = world.startVoxel;
+
+  // center of that voxel in metres:
+  const wx = (vx + 0.5) * s - half;
+  const wz = (vz + 0.5) * s - half;
+
+  // place camera just above the floor (y = 0.3 is arbitrary eye‐height)
+  camera.eye = new Vector3([wx, 0.3, wz]);
+  // look straight down the −Z axis initially:
+  camera.at  = new Vector3([wx, 0.3, wz - 1]);
   camera.up = new Vector3([0, 1, 0]);
+
   
   gl.uniformMatrix4fv(u_ModelMatrix, false, x.elements);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, x.elements);
@@ -177,6 +216,25 @@ function initTextures() {
   image1.src = 'images/grass.jpg';
 
   //add more textures here
+
+  let image2 = new Image();
+  if(!image2) {
+    console.log('Failed to create image object');
+    return false;
+  }
+
+  image2.onload = function() { loadTexture2(image2); };
+  image2.src = 'images/lava.jpg';
+
+  let image3 = new Image();
+  if(!image3) {
+    console.log('Failed to create image object');
+    return false;
+  }
+
+  image3.onload = function() { loadTexture3(image3); };
+  image3.src = 'images/dogfood.jpg';
+
 
   return true;
 }
@@ -227,12 +285,88 @@ function loadTexture1(image) {
   console.log("Texture1 loaded");
 }
 
+function loadTexture2(image) {
+  let texture = gl.createTexture();
 
-function addActionListeners() { 
-  
+  if(!texture) {
+    console.log('Failed to create the texture object');
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+  gl.activeTexture(gl.TEXTURE2);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  gl.uniform1i(u_Sampler2, 2);
+
+  console.log("Texture2 loaded");
 }
 
+
+function loadTexture3(image) {
+  let texture = gl.createTexture();
+
+  if(!texture) {
+    console.log('Failed to create the texture object');
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+  gl.activeTexture(gl.TEXTURE3);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  gl.uniform1i(u_Sampler3, 3);
+
+  console.log("Texture3 loaded");
+}
+
+function rotateCam(ev) {
+  camera.panRight(ev.movementX*0.1);
+  camera.panUp(ev.movementY*0.1);
+}
+
+function addActionListeners() {
+
+  canvas.addEventListener('mousedown', () => {
+    if (document.pointerLockElement !== canvas) {
+      canvas.requestPointerLock();
+    }
+  });
+
+  /* Enable / disable mouse-look when lock changes */
+  document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === canvas) {
+      document.addEventListener('mousemove', rotateCam);
+    } else {
+      document.removeEventListener('mousemove', rotateCam);
+    }
+  });
+}
+
+
 function keydown(ev) {
+  if (ev.key === 'p' || ev.key === 'P') {
+    world.placeBlock(camera);
+    renderAllShapes();
+    return;
+  }
+  if (ev.key === 'r' || ev.key === 'R') {
+    world.removeBlock(camera);
+    renderAllShapes();
+    return;
+  }
   if(ev.keyCode == 39 || ev.keyCode == 68) {
     camera.moveRight();
   }
@@ -252,18 +386,6 @@ function keydown(ev) {
     camera.panRight(5);
   }
   renderAllShapes();
-}
-
-
-function convertMouseToEventCoords(ev) {
-  var x = ev.clientX;
-  var y = ev.clientY;
-  var rect = ev.target.getBoundingClientRect();
-
-  x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
-  y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
-
-  return([x, y]);
 }
 
 function renderAllShapes() {
@@ -287,21 +409,26 @@ function renderAllShapes() {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+
   let sky = new Cube();
-  sky.textureNum = [2,2,2,2,2,0];
+  sky.textureNum = [2,2,2,2,2,4];
   sky.color = [1, 0, 0, 1];
   sky.matrix.translate(-1, -1, -1);
   sky.matrix.scale(100, 100, 100);
   sky.matrix.translate(-0.5, -0.5, -0.5)
-  sky.renderSkyCube();
+  sky.render();
+  
 
   let floor = new Cube();
   floor.textureNum = [3,3,3,3,3,3];
   floor.color = [1, 0, 0, 1];
-  floor.matrix.translate(0, -0.75, 0.0);
-  floor.matrix.scale(10, 0.01, 10);
+  floor.matrix.translate(0, -0.76, 0.0);
+  floor.matrix.scale(world.grid * world.voxel, 0.01, world.grid * world.voxel);
   floor.matrix.translate(-0.5, 0, -0.5);
   floor.render();
+
+  world.drawMap();
+  world.drawDynamicBlocks();
 
   var duration = performance.now() - start_time;
   sendTextToHTML(" ms: " + Math.floor(duration) + " fps: " + Math.floor(10000/duration), 'performanceDisplay');

@@ -9,22 +9,6 @@ class Cube {
     }
 
     render() {
-        if(this.vbuffer === null) {
-            this.vbuffer = gl.createBuffer();
-            if (!this.vbuffer) {
-              console.log("Failed to create the buffer object");
-              return -1;
-            }
-        }
-        
-        if(this.uvbuffer === null) {
-            this.uvbuffer = gl.createBuffer();
-            if (!this.uvbuffer) {
-              console.log("Failed to create the buffer object");
-              return -1;
-            }
-        }
-
         var rgba = this.color;
 
         // pass the matrix to u_ModelMatrix attribute
@@ -33,138 +17,68 @@ class Cube {
         // pass the color of a point to u_FragColor uniform variable
         gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
 
-        //pass the texture number
-        gl.uniform1i(u_textureNum, this.textureNum);
-
         // front face
         gl.uniform1i(u_textureNum, this.textureNum[0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
+        drawTriangle3DUV([0.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
+        drawTriangle3DUV([0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
         
-        // back of the cube
+        //back of the cube
         gl.uniform1i(u_textureNum, this.textureNum[1]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 1.0,  1.0, 1.0, 1.0,  0.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
+        drawTriangle3DUV([1.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
+        drawTriangle3DUV([1.0, 0.0, 1.0,  1.0, 1.0, 1.0,  0.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
 
         // face to the right
         gl.uniform1i(u_textureNum, this.textureNum[2]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 0.0,  1.0, 1.0, 1.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
+        drawTriangle3DUV([1.0, 0.0, 0.0,  1.0, 1.0, 1.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
+        drawTriangle3DUV([1.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
 
         // face to the left
         gl.uniform1i(u_textureNum, this.textureNum[3]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 1.0,  0.0, 1.0, 0.0,  0.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
+        drawTriangle3DUV([0.0, 0.0, 1.0,  0.0, 1.0, 0.0,  0.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
+        drawTriangle3DUV([0.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
 
-        // top face
+        //top face
         gl.uniform1i(u_textureNum, this.textureNum[4]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 1.0, 0.0,  1.0, 1.0, 1.0,  1.0, 1.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 1.0, 0.0,  0.0, 1.0, 1.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
+        drawTriangle3DUV([0.0, 1.0, 0.0,  1.0, 1.0, 1.0,  1.0, 1.0, 0.0], [0,0, 1,1, 1,0]);
+        drawTriangle3DUV([0.0, 1.0, 0.0,  0.0, 1.0, 1.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
 
         // bottom face
         gl.uniform1i(u_textureNum, this.textureNum[5]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 1.0,  1.0, 0.0, 0.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 1.0,  0.0, 0.0, 0.0,  1.0, 0.0, 0.0], [0,0, 0,1, 1,1]);
-    }
-
-
-    renderSkyCube() {
-
-        //gl.disable(gl.CULL_FACE);
-        //gl.depthMask(false);
-
-        if(this.vbuffer === null) {
-            this.vbuffer = gl.createBuffer();
-            if (!this.vbuffer) {
-              console.log("Failed to create the buffer object");
-              return -1;
-            }
-        }
-
-        if(this.uvbuffer === null) {
-            this.uvbuffer = gl.createBuffer();
-            if (!this.uvbuffer) {
-              console.log("Failed to create the buffer object");
-              return -1;
-            }
-        }
-
-        var rgba = this.color;
-
-        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
-
-        // front of the cube
-        gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
-        
-        gl.uniform1i(u_textureNum, this.textureNum);
-        
-        // front face
-        gl.uniform1i(u_textureNum, this.textureNum[0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 0.0,  1.0, 1.0, 0.0,  0.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
-        
-        // back face
-        gl.uniform1i(u_textureNum, this.textureNum[1]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 1.0,  0.0, 1.0, 1.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
-
-        // right face
-        gl.uniform1i(u_textureNum, this.textureNum[2]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 1.0,  1.0, 1.0, 0.0,  1.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
-
-        // left face
-        gl.uniform1i(u_textureNum, this.textureNum[3]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 0.0,  0.0, 1.0, 1.0,  0.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
-
-
-        // top face
-        gl.uniform1i(u_textureNum, this.textureNum[4]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 1.0, 0.0,  0.0, 1.0, 1.0,  0.0, 1.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [1.0, 1.0, 0.0,  1.0, 1.0, 1.0,  0.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
-
-        // bottom face
-        gl.uniform1i(u_textureNum, this.textureNum[5]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 0.0,  1.0, 0.0, 1.0,  1.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
-        drawTriangle3DUV(this.vbuffer, this.uvbuffer, [0.0, 0.0, 0.0,  0.0, 0.0, 1.0,  1.0, 0.0, 1.0], [0,0, 0,1, 1,1]);
-
-        gl.depthMask(true);
-        gl.enable(gl.CULL_FACE);
-
+        drawTriangle3DUV([0.0, 0.0, 1.0,  1.0, 0.0, 0.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
+        drawTriangle3DUV([0.0, 0.0, 1.0,  0.0, 0.0, 0.0,  1.0, 0.0, 0.0], [0,0, 0,1, 1,1]);
     }
 
     renderFast() {
-        let rgba = this.color;
-        gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
-  
+        const c = this.color;
+        gl.uniform4f(u_FragColor, c[0], c[1], c[2], c[3]);
         gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
-  
-        var allVerts = []
-
-        // front + back faces
-        gl.uniform1i(u_textureOption, 0);
-        allVerts = allVerts.concat([0.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 0.0, 0.0]);
-        allVerts = allVerts.concat([0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 1.0, 0.0]);
-  
-        allVerts = allVerts.concat([1.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 0.0, 1.0]);
-        allVerts = allVerts.concat([1.0, 0.0, 1.0,  1.0, 1.0, 1.0,  0.0, 1.0, 1.0]);
-  
-        // right + left faces
-        allVerts = allVerts.concat([1.0, 0.0, 0.0,  1.0, 1.0, 1.0,  1.0, 0.0, 1.0]);
-        allVerts = allVerts.concat([1.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 1.0, 1.0]);
-  
-        allVerts = allVerts.concat([0.0, 0.0, 1.0,  0.0, 1.0, 0.0,  0.0, 0.0, 0.0]);
-        allVerts = allVerts.concat([0.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 1.0, 0.0]);
-  
-        // top + bottom faces
-        allVerts = allVerts.concat([0.0, 1.0, 0.0,  1.0, 1.0, 1.0,  1.0, 1.0, 0.0]);
-        allVerts = allVerts.concat([0.0, 1.0, 0.0,  0.0, 1.0, 1.0,  1.0, 1.0, 1.0]);
-  
-        allVerts = allVerts.concat([0.0, 0.0, 1.0,  1.0, 0.0, 0.0,  1.0, 0.0, 1.0]);
-        allVerts = allVerts.concat([0.0, 0.0, 1.0,  0.0, 0.0, 0.0,  1.0, 0.0, 0.0]);
-  
-        drawTriangle3D(allVerts);
-    }
+      
+        /* one texture index for every face (solid colour) */
+        gl.uniform1i(u_textureNum, 0);
+      
+        const verts = [
+          // front
+          0,0,0,  1,1,0,  1,0,0,
+          0,0,0,  0,1,0,  1,1,0,
+          // back
+          1,0,1,  0,1,1,  0,0,1,
+          1,0,1,  1,1,1,  0,1,1,
+          // right
+          1,0,0,  1,1,1,  1,0,1,
+          1,0,0,  1,1,0,  1,1,1,
+          // left
+          0,0,1,  0,1,0,  0,0,0,
+          0,0,1,  0,1,1,  0,1,0,
+          // top
+          0,1,0,  1,1,1,  1,1,0,
+          0,1,0,  0,1,1,  1,1,1,
+          // bottom
+          0,0,1,  1,0,0,  1,0,1,
+          0,0,1,  0,0,0,  1,0,0
+        ];
+      
+        drawTriangle3D(verts);
+      }
+      
 
 }

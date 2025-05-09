@@ -44,28 +44,25 @@ function drawTriangle(vertices) {
 }
 
 function drawTriangle3D(vertices) {
-  var n = 3; // Number of vertices
+  // we’re drawing a colour‑only shape → turn UVs off
+  gl.disableVertexAttribArray(a_UV);
+  gl.vertexAttrib2f(a_UV, 0.0, 0.0);   // default value if shader still reads it
 
-  //Create a buffer object that lives on the GPU
-  var vertexBuffer = gl.createBuffer();
-  if (!vertexBuffer) {
-    console.log('Failed to create the buffer object');
-    return -1;
-  }
+  const n = vertices.length / 3;
 
-  // Bind the buffer object to target
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  // Write date into the buffer object (sending the vertices to the GPU/ GLSL)
+  const vbuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
 
-  // Assign the buffer object to a_Position variable
   gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
-
-  // Enable the assignment to a_Position variable
   gl.enableVertexAttribArray(a_Position);
 
   gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  // (optional) re‑enable UVs afterwards so textured calls work
+  gl.enableVertexAttribArray(a_UV);
 }
+
 
 function drawTriangleColor(vertices, rgba){
     gl.uniform4f(u_FragColor, rgba[0]/255, rgba[1]/255, rgba[2]/255, rgba[3]);
