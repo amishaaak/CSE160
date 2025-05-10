@@ -67,7 +67,21 @@ let u_Sampler2;
 let u_Sampler3;
 
 let u_textureNum;
-//let u_texColorWeight;
+let exitPos = { x: 0, y: 0, z: 0 };
+
+//animation constants 
+let g_headYaw   = 0;
+let g_neckYaw   = 0;
+let g_flUpper   = 0;
+let g_flLower   = 0;
+let g_frUpper   = 0;
+let g_frLower   = 0;
+let g_blUpper   = 0;
+let g_blLower   = 0;
+let g_brUpper   = 0;
+let g_brLower   = 0;
+let g_tailBase  = 0;
+let g_earTilt   = 0;
 
 let g_cameraAngleX = 0;
 let g_cameraAngleY = 0;
@@ -188,6 +202,28 @@ function connectVariablesToGLSL() {
   // look straight down the −Z axis initially:
   camera.at  = new Vector3([wx, 0.3, wz - 1]);
   camera.up = new Vector3([0, 1, 0]);
+
+
+  const exitLogical = world.logicCells - 2;
+
+  // 2) convert that logical cell into voxel indices
+  //    each logical step is `world.logic` voxels wide
+  const exitVx = exitLogical * world.logic;
+  const exitVz = exitLogical * world.logic;
+
+  // 3) convert (vx, vz) in voxels to world-space metres
+  function voxelToWorld(vx, vy, vz) {
+    const s    = world.voxel;          // e.g. 0.5 m
+    const half = (world.grid * s) / 2; // centers the grid at origin
+    return {
+      x: (vx + 0.5) * s - half,
+      y:  vy       * s - 0.75,         // matches your drawMap() floor offset
+      z: (vz + 0.5) * s - half
+    };
+  }
+
+  exitPos = voxelToWorld(exitVx, 0, exitVz);
+  console.log('exitPos:', exitPos); 
 
   
   gl.uniformMatrix4fv(u_ModelMatrix, false, x.elements);
@@ -388,6 +424,131 @@ function keydown(ev) {
   renderAllShapes();
 }
 
+function updateAnimationAngles() {
+  const w = g_seconds * 3.3;
+
+  /* idle walk */
+  g_flUpper=  15 * Math.sin(w);
+  g_flLower=  25 * Math.sin(w);
+  g_frUpper = -15 * Math.sin(w);
+  g_frLower= -25 * Math.sin(w);
+  g_blUpper = -10 * Math.sin(w);
+  g_blLower =  20 * Math.sin(w);
+  g_brUpper =  10 * Math.sin(w);
+  g_brLower = -20 * Math.sin(w);
+  g_tailBase=  15 * Math.sin(w);
+  g_earTilt =  8 * Math.sin(w * 1.7);
+}
+
+function leg(root, offX, offY, offZ, upperAng, lowerAng){
+  const LEG  = [0.49,0.302,0.173,1], PAW=[0.361,0.224,0.031,1];
+
+  // Upper segment
+  const up = new Cube();
+  up.color = LEG;
+  up.textureNum = 0;                 // fast path: solid color
+  up.matrix = new Matrix4(root);
+  up.matrix.translate(offX, offY, offZ);
+  up.matrix.rotate(upperAng, 0,0,1);
+  const saveUp = new Matrix4(up.matrix);
+  up.matrix.rotate(180, 1,0,0);
+  up.matrix.scale(0.12, 0.21, -0.12);
+  up.renderFast();
+
+  // Lower segment
+  const low = new Cube();
+  low.color = LEG;
+  low.textureNum = 0;
+  low.matrix = saveUp;
+  low.matrix.translate(0.015, -0.19, 0);
+  low.matrix.rotate(180, 1,0,0);
+  low.matrix.rotate(lowerAng, 0,0,1);
+  const saveLow = new Matrix4(low.matrix);
+  low.matrix.scale(0.09, 0.15, -0.09);
+  low.renderFast();
+
+  // Paw
+  const paw = new Cube();
+  paw.color = PAW;
+  paw.textureNum = 0;
+  paw.matrix = saveLow;
+  paw.matrix.translate(-0.01, 0.14, -0.09);
+  paw.matrix.scale(0.11, 0.11, 0.11);
+  paw.renderFast();
+}
+
+
+function drawAnimal(root){
+  /* torso */
+  const torso = new Cube();
+  torso.color = [0.431,0.247,0.122,1];
+  torso.textureNum = 0;
+  torso.matrix = new Matrix4(root);
+  torso.matrix.translate(-0.55, -0.15, 0);
+  torso.matrix.scale(0.75, 0.3, 0.5);
+  torso.renderFast();
+
+  /* neck & head */
+  const neckBase = new Matrix4(root);
+  neckBase.translate(-0.058, -0.05, 0.15);
+  neckBase.rotate(-10, 0,0,1);
+  neckBase.rotate(g_neckYaw, 0,1,0);
+
+  const neck = new Cube();
+  neck.color = [0.431,0.247,0.122,1];
+  neck.textureNum = 0;
+  neck.matrix = new Matrix4(neckBase);
+  neck.matrix.scale(0.25, 0.39, 0.2);
+  neck.renderFast();
+
+  const head = new Cube();
+  head.color = [0.49,0.302,0.173,1];
+  head.textureNum = 0;
+  head.matrix = new Matrix4(neckBase);
+  head.matrix.translate(-0.03, 0.32, -0.038);
+  head.matrix.rotate(-11, 0,0,1);
+  head.matrix.rotate(g_headYaw, 0,1,0);
+  head.matrix.scale(0.38, 0.23, 0.26);
+  head.renderFast();
+  const headRef = new Matrix4(head.matrix);
+
+  /* ears */
+  const earL = new Pyramid();
+  earL.color = [0.361,0.224,0.031,1];
+  earL.matrix = new Matrix4(headRef);
+  earL.matrix.translate(0.01, 1.05, 0.9);
+  earL.matrix.rotate(-10, 0,0,1);
+  earL.matrix.rotate(g_earTilt, 1,0,0);
+  earL.matrix.scale(0.38, 0.38, 0.42);
+  earL.render();
+
+  const earR = new Pyramid();
+  earR.color = [0.361,0.224,0.031,1];
+  earR.matrix = new Matrix4(headRef);
+  earR.matrix.translate(0.01, 1.05, 0.10);
+  earR.matrix.rotate(-10, 0,0,1);
+  earR.matrix.rotate(-g_earTilt, 1,0,0);
+  earR.matrix.scale(0.38, 0.38, -0.42);
+  earR.render();
+
+  /* tail */
+  const tail = new Cube();
+  tail.color = [0.361,0.224,0.031,1];
+  tail.textureNum = 0;
+  tail.matrix = new Matrix4(root);
+  tail.matrix.translate(-0.66, -0.05, 0.21);
+  tail.matrix.rotate(g_tailBase, 0,1,0);
+  tail.matrix.rotate(5, 0,0,1);
+  tail.matrix.scale(0.11, 0.11, 0.11);
+  tail.renderFast();
+
+  /* legs */
+  leg(root,  0.01,-0.07, 0.08, g_flUpper, g_flLower);
+  leg(root,  0.01,-0.07, 0.35, g_frUpper, g_frLower);
+  leg(root, -0.50,-0.08, 0.08, g_blUpper, g_blLower);
+  leg(root, -0.50,-0.08, 0.35, g_brUpper, g_brLower);
+}
+
 function renderAllShapes() {
   var start_time = performance.now();
 
@@ -411,7 +572,7 @@ function renderAllShapes() {
 
 
   let sky = new Cube();
-  sky.textureNum = [2,2,2,2,2,4];
+  sky.textureNum = 2;
   sky.color = [1, 0, 0, 1];
   sky.matrix.translate(-1, -1, -1);
   sky.matrix.scale(100, 100, 100);
@@ -420,7 +581,7 @@ function renderAllShapes() {
   
 
   let floor = new Cube();
-  floor.textureNum = [3,3,3,3,3,3];
+  floor.textureNum = 3;
   floor.color = [1, 0, 0, 1];
   floor.matrix.translate(0, -0.76, 0.0);
   floor.matrix.scale(world.grid * world.voxel, 0.01, world.grid * world.voxel);
@@ -429,6 +590,15 @@ function renderAllShapes() {
 
   world.drawMap();
   world.drawDynamicBlocks();
+
+  const s = world.voxel;    
+  const root=new Matrix4();
+  root.translate(-0.3 * s,   // slide right   (optional, centre in corridor)
+               -0.6 * s,   // raise up
+               0.2 * s);  // slide forward (optional)
+
+  root.scale(0.75, 0.75, 0.75);
+  drawAnimal(root);
 
   var duration = performance.now() - start_time;
   sendTextToHTML(" ms: " + Math.floor(duration) + " fps: " + Math.floor(10000/duration), 'performanceDisplay');
@@ -448,6 +618,8 @@ var g_seconds = performance.now()/1000.0 - g_startTime;
 
 function tick() {
   g_seconds = performance.now()/1000.0 - g_startTime;
+
+  updateAnimationAngles();
   
   renderAllShapes();
 
@@ -468,7 +640,5 @@ function main() {
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   
-  renderAllShapes();
-
   requestAnimationFrame(tick);
 }

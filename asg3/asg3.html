@@ -7,6 +7,23 @@
       .segment {
         display: inline-flex;
       }
+      #grader-notes {
+        margin-top: 1em;
+        padding: 0.5em;
+        border: 1px solid #ccc;
+        width: 1150px;
+        font-family: sans-serif;
+      }
+      #grader-notes h2 {
+        margin-bottom: 0.5em;
+      }
+      #grader-notes ul {
+        list-style-type: disc;
+        margin-left: 1.5em;
+      }
+      #grader-notes li {
+        margin-bottom: 0.3em;
+      }
     </style>
   </head>
 
@@ -22,7 +39,18 @@
     <br>
     <div class="segment" id="performanceDisplay"></div>
     <br>
-    
+
+    <!-- Grader Notes Section -->
+    <section id="grader-notes">
+      <h2>Grader Notes</h2>
+      <ul>
+        <li>Use WASD to move and also the arrow keys to move</li>
+        <li>Use the keys P/p to place a block and R/r to remove a block</li>
+        <li>For my wow point, I decided to implement collision detection so that the user can't go through the walls</li>
+        <li>Story: find the dog in the maze and place blocks that are dog treat wrapped in hopes of bringing the dog out</li>
+      </ul>
+    </section>
+    <br>
 
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
@@ -35,6 +63,5 @@
     <script src="helper/camera.js"></script>
     <script src="helper/world.js"></script>
     <script src="asg3.js"></script>
-
   </body>
 </html>

@@ -43,25 +43,34 @@ function drawTriangle(vertices) {
     gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
-function drawTriangle3D(vertices) {
-  // we’re drawing a colour‑only shape → turn UVs off
-  gl.disableVertexAttribArray(a_UV);
-  gl.vertexAttrib2f(a_UV, 0.0, 0.0);   // default value if shader still reads it
-
+function drawTriangle3D(vertices, uvs) {
   const n = vertices.length / 3;
 
+  /* positions ---------------------------------------------------- */
   const vbuf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-
   gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(a_Position);
 
+  /* UVs on / off -------------------------------------------------- */
+  if (uvs !== undefined) {
+    const tbuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tbuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_UV);
+  } else {
+    gl.disableVertexAttribArray(a_UV);
+    gl.vertexAttrib2f(a_UV, 0.0, 0.0);  // safe default if shader still reads v_UV
+  }
+
   gl.drawArrays(gl.TRIANGLES, 0, n);
 
-  // (optional) re‑enable UVs afterwards so textured calls work
-  gl.enableVertexAttribArray(a_UV);
+  // leave a_UV enabled for subsequent textured draws
+  gl.disableVertexAttribArray(a_UV);
 }
+
 
 
 function drawTriangleColor(vertices, rgba){
@@ -114,4 +123,5 @@ function drawTriangle3DUV(vertices, uv) {
   gl.enableVertexAttribArray(a_UV);
 
   gl.drawArrays(gl.TRIANGLES, 0, n);
+
 }

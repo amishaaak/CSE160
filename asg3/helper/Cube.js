@@ -5,7 +5,7 @@ class Cube {
         this.matrix = new Matrix4();
         this.vbuffer = null;
         this.uvbuffer = null;
-        this.textureNum = [0,0,0,0,0,0]; //array of texture options for each face
+        this.textureNum = 0; //array of texture options for each face
     }
 
     render() {
@@ -18,67 +18,95 @@ class Cube {
         gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
 
         // front face
-        gl.uniform1i(u_textureNum, this.textureNum[0]);
+        gl.uniform1i(u_textureNum, this.textureNum);
         drawTriangle3DUV([0.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
         drawTriangle3DUV([0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
         
         //back of the cube
-        gl.uniform1i(u_textureNum, this.textureNum[1]);
+        gl.uniform1i(u_textureNum, this.textureNum);
         drawTriangle3DUV([1.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
         drawTriangle3DUV([1.0, 0.0, 1.0,  1.0, 1.0, 1.0,  0.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
 
         // face to the right
-        gl.uniform1i(u_textureNum, this.textureNum[2]);
+        gl.uniform1i(u_textureNum, this.textureNum);
         drawTriangle3DUV([1.0, 0.0, 0.0,  1.0, 1.0, 1.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
         drawTriangle3DUV([1.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
 
         // face to the left
-        gl.uniform1i(u_textureNum, this.textureNum[3]);
+        gl.uniform1i(u_textureNum, this.textureNum);
         drawTriangle3DUV([0.0, 0.0, 1.0,  0.0, 1.0, 0.0,  0.0, 0.0, 0.0], [0,0, 1,1, 1,0]);
         drawTriangle3DUV([0.0, 0.0, 1.0,  0.0, 1.0, 1.0,  0.0, 1.0, 0.0], [0,0, 0,1, 1,1]);
 
         //top face
-        gl.uniform1i(u_textureNum, this.textureNum[4]);
+        gl.uniform1i(u_textureNum, this.textureNum);
         drawTriangle3DUV([0.0, 1.0, 0.0,  1.0, 1.0, 1.0,  1.0, 1.0, 0.0], [0,0, 1,1, 1,0]);
         drawTriangle3DUV([0.0, 1.0, 0.0,  0.0, 1.0, 1.0,  1.0, 1.0, 1.0], [0,0, 0,1, 1,1]);
 
         // bottom face
-        gl.uniform1i(u_textureNum, this.textureNum[5]);
+        gl.uniform1i(u_textureNum, this.textureNum);
         drawTriangle3DUV([0.0, 0.0, 1.0,  1.0, 0.0, 0.0,  1.0, 0.0, 1.0], [0,0, 1,1, 1,0]);
         drawTriangle3DUV([0.0, 0.0, 1.0,  0.0, 0.0, 0.0,  1.0, 0.0, 0.0], [0,0, 0,1, 1,1]);
     }
 
     renderFast() {
+      /* --------- local geometry --------- */
+      const cubeVerts = [
+        // front
+        0,0,0,  1,1,0,  1,0,0,
+        0,0,0,  0,1,0,  1,1,0,
+        // back
+        1,0,1,  0,1,1,  0,0,1,
+        1,0,1,  1,1,1,  0,1,1,
+        // right
+        1,0,0,  1,1,1,  1,0,1,
+        1,0,0,  1,1,0,  1,1,1,
+        // left
+        0,0,1,  0,1,0,  0,0,0,
+        0,0,1,  0,1,1,  0,1,0,
+        // top
+        0,1,0,  1,1,1,  1,1,0,
+        0,1,0,  0,1,1,  1,1,1,
+        // bottom
+        0,0,1,  1,0,0,  1,0,1,
+        0,0,1,  0,0,0,  1,0,0
+      ];
+    
+      /* one UV for every vertex above (simple tiling) */
+      const cubeUVs = [
+        // front
+        0,0, 1,1, 1,0,  0,0, 0,1, 1,1,
+        // back
+        1,0, 0,1, 0,0,  1,0, 1,1, 0,1,
+        // right
+        0,0, 1,1, 1,0,  0,0, 0,1, 1,1,
+        // left
+        1,0, 0,1, 0,0,  1,0, 1,1, 0,1,
+        // top
+        0,0, 1,1, 1,0,  0,0, 0,1, 1,1,
+        // bottom
+        0,0, 1,1, 1,0,  0,0, 0,1, 1,1
+      ];
+    
+      gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
+    
+      const useTexture = this.textureNum !== 0;   // 0 → solid colour
+      if (useTexture) {
+        /* tell the fragment shader which sampler to use */
+        gl.uniform1i(u_textureNum, this.textureNum);
+        gl.uniform4f(u_FragColor, 1.0, 1.0, 1.0, 1.0); // no tint
+      } else {
+        gl.uniform1i(u_textureNum, 0);
         const c = this.color;
         gl.uniform4f(u_FragColor, c[0], c[1], c[2], c[3]);
-        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
-      
-        /* one texture index for every face (solid colour) */
-        gl.uniform1i(u_textureNum, 0);
-      
-        const verts = [
-          // front
-          0,0,0,  1,1,0,  1,0,0,
-          0,0,0,  0,1,0,  1,1,0,
-          // back
-          1,0,1,  0,1,1,  0,0,1,
-          1,0,1,  1,1,1,  0,1,1,
-          // right
-          1,0,0,  1,1,1,  1,0,1,
-          1,0,0,  1,1,0,  1,1,1,
-          // left
-          0,0,1,  0,1,0,  0,0,0,
-          0,0,1,  0,1,1,  0,1,0,
-          // top
-          0,1,0,  1,1,1,  1,1,0,
-          0,1,0,  0,1,1,  1,1,1,
-          // bottom
-          0,0,1,  1,0,0,  1,0,1,
-          0,0,1,  0,0,0,  1,0,0
-        ];
-      
-        drawTriangle3D(verts);
       }
-      
+    
+      /* draw, with or without UVs (no ternary operator in the call) */
+      if (useTexture) {
+        drawTriangle3D(cubeVerts, cubeUVs);
+      } else {
+        drawTriangle3D(cubeVerts);        // second argument omitted
+      }
+    }
+    
 
 }

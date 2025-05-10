@@ -1,15 +1,14 @@
 class World {
-    /* ---------- tweak here ---------- */
-    voxel = 0.5;          // edge length of one cube
-    logic = 2;            // 1 logical maze cell = 2×2 voxels
-    grid  = 32;           // final voxel grid (32×32)
+    voxel = 0.5; //size of single cube edge
+    logic = 2; // number of voxels per logic maze cell
+    grid  = 32; //final voxel grid is 32 x 32
   
     constructor() {
-        /* --- derive logical maze size (must be odd) --- */
+        /* --- creating the logical maze dimensions --- */
         this.logicCells = Math.floor(this.grid / this.logic);
         if (this.logicCells % 2 === 0) this.logicCells--;   // make odd
       
-        /* --- carve a perfect maze on logic grid --- */
+        // c
         const L = this.logicCells;
         const maze = Array(L).fill().map(()=>Array(L).fill(1));
         const carve = (x,z) => {
@@ -33,26 +32,32 @@ class World {
         this.height = 3;
         this.world = Array(this.grid).fill().map(()=>Array(this.grid).fill(0));
       
-        for (let lx=0; lx<L; lx++){
-          for (let lz=0; lz<L; lz++){
-            const h = maze[lx][lz] ? 2 : 0;          // 2-high interior wall or empty
-            for (let ox=0; ox<this.logic; ox++){
-              for (let oz=0; oz<this.logic; oz++){
-                const vx = lx*this.logic+ox;
-                const vz = lz*this.logic+oz;
-                if (vx < this.grid && vz < this.grid) {
-                  this.world[vx][vz] = h;
+        for (let lx = 0; lx < L; lx++) {
+            for (let lz = 0; lz < L; lz++) {
+              // start with 0, then bump to 2 if it's a wall
+              let h = 0;
+              if (maze[lx][lz]) {
+                h = 2;
+              }
+          
+              for (let ox = 0; ox < this.logic; ox++) {
+                for (let oz = 0; oz < this.logic; oz++) {
+                  const vx = lx * this.logic + ox;
+                  const vz = lz * this.logic + oz;
+                  if (vx < this.grid && vz < this.grid) {
+                    this.world[vx][vz] = h;
+                  }
                 }
               }
             }
-          }
         }
+          
         
-        // Then, explicitly override the perimeter to ensure it's set to height 3
+        // override the perimeter to ensure it's set to height 3
         for (let x = 0; x < this.grid; x++) {
           for (let z = 0; z < this.grid; z++) {
             if (x === 0 || z === 0 || x === this.grid-1 || z === this.grid-1) {
-              this.world[x][z] = 3;  // Perimeter walls are height 3
+              this.world[x][z] = 3;
             }
           }
         }
@@ -79,7 +84,11 @@ class World {
             if (!h) continue;
             
             // Set color based on whether it's a perimeter wall or interior wall
-            cube.color = (h===3) ? [0.25,0.12,0.04,1] : [0.55,0.28,0.08,1];
+            if (h === 3) {
+                cube.color = [0.25, 0.12, 0.04, 1];
+              } else {
+                cube.color = [0.55, 0.28, 0.08, 1];
+            }
             
             for (let y=0; y<h; y++){
               cube.matrix.setIdentity();
@@ -97,11 +106,11 @@ class World {
 
     drawDynamicBlocks() {
         const base = this.voxel;
-        const s    = base * 0.9;                // shrink a little
+        const s = base * 0.9;
         const half = (this.grid * base) / 2;
-        const inset = (base - s) / 2;           // center the shrunken cube
+        const inset = (base - s) / 2;
         const cube  = new Cube();
-        cube.textureNum = [5, 5, 5, 5, 5, 5];
+        cube.textureNum = 5;
       
         for (let x = 0; x < this.grid; ++x)
           for (let z = 0; z < this.depth; ++z)
