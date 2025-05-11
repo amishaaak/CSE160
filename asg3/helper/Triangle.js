@@ -46,14 +46,12 @@ function drawTriangle(vertices) {
 function drawTriangle3D(vertices, uvs) {
   const n = vertices.length / 3;
 
-  /* positions ---------------------------------------------------- */
   const vbuf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
   gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(a_Position);
 
-  /* UVs on / off -------------------------------------------------- */
   if (uvs !== undefined) {
     const tbuf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tbuf);
@@ -62,7 +60,7 @@ function drawTriangle3D(vertices, uvs) {
     gl.enableVertexAttribArray(a_UV);
   } else {
     gl.disableVertexAttribArray(a_UV);
-    gl.vertexAttrib2f(a_UV, 0.0, 0.0);  // safe default if shader still reads v_UV
+    gl.vertexAttrib2f(a_UV, 0.0, 0.0);  
   }
 
   gl.drawArrays(gl.TRIANGLES, 0, n);

@@ -5,7 +5,7 @@ class Cube {
         this.matrix = new Matrix4();
         this.vbuffer = null;
         this.uvbuffer = null;
-        this.textureNum = 0; //array of texture options for each face
+        this.textureNum = 0; 
     }
 
     render() {
@@ -89,22 +89,22 @@ class Cube {
     
       gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
     
-      const useTexture = this.textureNum !== 0;   // 0 → solid colour
+      const useTexture = this.textureNum !== 0;  
       if (useTexture) {
-        /* tell the fragment shader which sampler to use */
+        /* telling the fragment shader which sampler to use */
         gl.uniform1i(u_textureNum, this.textureNum);
-        gl.uniform4f(u_FragColor, 1.0, 1.0, 1.0, 1.0); // no tint
+        gl.uniform4f(u_FragColor, 1.0, 1.0, 1.0, 1.0);
       } else {
         gl.uniform1i(u_textureNum, 0);
         const c = this.color;
         gl.uniform4f(u_FragColor, c[0], c[1], c[2], c[3]);
       }
     
-      /* draw, with or without UVs (no ternary operator in the call) */
+      /* draw, with or without UVs */
       if (useTexture) {
         drawTriangle3D(cubeVerts, cubeUVs);
       } else {
-        drawTriangle3D(cubeVerts);        // second argument omitted
+        drawTriangle3D(cubeVerts);
       }
     }
     

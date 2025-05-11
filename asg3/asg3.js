@@ -183,47 +183,22 @@ function connectVariablesToGLSL() {
 
   let x = new Matrix4();
   camera = new Camera();
-  // camera.eye = new Vector3([0, 0.3, 3]);
-  // camera.at = new Vector3([0, 0.3, 0]);
-  //camera.up = new Vector3([0, 1, 0]);
   world = new World();
   camera.world = world;
 
-  const s    = world.voxel;               // 0.5 m
-  const half = (world.grid * s) / 2;      // 16 m/2
+ // calculate camera position
+ // converting the maze’s start‐cell indices into real‐world meters, centering it, then placing the camera a bit above the floor at that spot
+ // and pointing it straight down the corridor, with “up” as +Y so the view isn’t tilted
+ 
+  const s    = world.voxel;
+  const half = (world.grid * s) / 2;
   const { x: vx, z: vz } = world.startVoxel;
-
-  // center of that voxel in metres:
   const wx = (vx + 0.5) * s - half;
   const wz = (vz + 0.5) * s - half;
 
-  // place camera just above the floor (y = 0.3 is arbitrary eye‐height)
   camera.eye = new Vector3([wx, 0.3, wz]);
-  // look straight down the −Z axis initially:
   camera.at  = new Vector3([wx, 0.3, wz - 1]);
   camera.up = new Vector3([0, 1, 0]);
-
-
-  const exitLogical = world.logicCells - 2;
-
-  // 2) convert that logical cell into voxel indices
-  //    each logical step is `world.logic` voxels wide
-  const exitVx = exitLogical * world.logic;
-  const exitVz = exitLogical * world.logic;
-
-  // 3) convert (vx, vz) in voxels to world-space metres
-  function voxelToWorld(vx, vy, vz) {
-    const s    = world.voxel;          // e.g. 0.5 m
-    const half = (world.grid * s) / 2; // centers the grid at origin
-    return {
-      x: (vx + 0.5) * s - half,
-      y:  vy       * s - 0.75,         // matches your drawMap() floor offset
-      z: (vz + 0.5) * s - half
-    };
-  }
-
-  exitPos = voxelToWorld(exitVx, 0, exitVz);
-  console.log('exitPos:', exitPos); 
 
   
   gl.uniformMatrix4fv(u_ModelMatrix, false, x.elements);
@@ -520,7 +495,7 @@ function drawAnimal(root){
   earL.matrix.rotate(-10, 0,0,1);
   earL.matrix.rotate(g_earTilt, 1,0,0);
   earL.matrix.scale(0.38, 0.38, 0.42);
-  earL.render();
+  earL.renderFast();
 
   const earR = new Pyramid();
   earR.color = [0.361,0.224,0.031,1];
@@ -529,7 +504,7 @@ function drawAnimal(root){
   earR.matrix.rotate(-10, 0,0,1);
   earR.matrix.rotate(-g_earTilt, 1,0,0);
   earR.matrix.scale(0.38, 0.38, -0.42);
-  earR.render();
+  earR.renderFast();
 
   /* tail */
   const tail = new Cube();
@@ -577,7 +552,7 @@ function renderAllShapes() {
   sky.matrix.translate(-1, -1, -1);
   sky.matrix.scale(100, 100, 100);
   sky.matrix.translate(-0.5, -0.5, -0.5)
-  sky.render();
+  sky.renderFast();
   
 
   let floor = new Cube();
@@ -586,17 +561,14 @@ function renderAllShapes() {
   floor.matrix.translate(0, -0.76, 0.0);
   floor.matrix.scale(world.grid * world.voxel, 0.01, world.grid * world.voxel);
   floor.matrix.translate(-0.5, 0, -0.5);
-  floor.render();
+  floor.renderFast();
 
   world.drawMap();
   world.drawDynamicBlocks();
 
   const s = world.voxel;    
   const root=new Matrix4();
-  root.translate(-0.3 * s,   // slide right   (optional, centre in corridor)
-               -0.6 * s,   // raise up
-               0.2 * s);  // slide forward (optional)
-
+  root.translate(world.dogX, -0.6 * s, world.dogZ);
   root.scale(0.75, 0.75, 0.75);
   drawAnimal(root);
 
