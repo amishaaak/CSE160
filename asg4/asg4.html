@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Amisha Kandi CSE160 Assignment 4</title>
+    <style>
+      #app-container {
+        display: flex;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      #left-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1em;
+        box-sizing: border-box;
+      }
+
+      #display-container {
+        flex: 0 0 auto;
+        text-align: center;
+      }
+
+      #performanceDisplay {
+        margin-top: 0.5em;
+      }
+
+      #grader-notes {
+        flex: 1;
+        margin-top: 1em;
+        padding: 0.5em;
+        border: 1px solid #ccc;
+        font-family: sans-serif;
+        overflow-y: auto;
+      }
+      #grader-notes h2 {
+        margin-bottom: 0.5em;
+      }
+      #grader-notes ul {
+        list-style-type: disc;
+        margin-left: 1.5em;
+      }
+      #grader-notes li {
+        margin-bottom: 0.3em;
+      }
+
+      #control-panel {
+        flex: 0 0 300px;
+        padding: 1em;
+        background: #f5f5f5;
+        border-left: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      #control-panel h3 {
+        margin-top: 0;
+        margin-bottom: 1em;
+        font-family: sans-serif;
+      }
+
+      .control-group {
+        margin-bottom: 1em;
+      }
+      .control-group input[type="button"] {
+        margin-right: 0.5em;
+        margin-bottom: 0.5em;
+        padding: 0.4em 0.8em;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+
+  <body onload="main()">
+    <div id="app-container">
+      <!-- Left Panel -->
+      <div id="left-panel">
+        <div id="display-container">
+          <canvas id="webgl" width="1150" height="600">
+            Please use a browser that supports "canvas"
+          </canvas>
+          <div id="performanceDisplay"></div>
+        </div>
+
+        <section id="grader-notes">
+          <h2>Grader Notes</h2>
+          <ul>
+            <li>In order to move the camera, use the keyboard (WASD/QE), arrow keys, or click on the canvas and drag the mouse</li>
+            <li>The lights off button turns all the lights off while the lights on button turns the lights on</li>
+            <li>To turn on the spotlight and keep the moving light, click the spotlight on button</li>
+            <li>Change the lights color by using a color picker for ambient, diffuse, and specular</li>
+            <li>Change the light position by using the X,Y, Z sliders</li>
+          </ul>
+        </section>
+      </div>
+
+      <aside id="control-panel">
+        <h3>Rendering Options</h3>
+
+        <div class="control-group">
+          <input type="button" value="Normals On"  onclick="g_normalOn = true">
+          <input type="button" value="Normals Off" onclick="g_normalOn = false">
+        </div>
+
+        <div class="control-group">
+          <input type="button" value="Light On"  onclick="g_lightOn = true">
+          <input type="button" value="Light Off" onclick="g_lightOn = false">
+        </div>
+
+        <div class="control-group">
+            <input type="button" value="Spotlight On"  onclick="g_spotlight.active = true">
+            <input type="button" value="Spotlight Off" onclick="g_spotlight.active = false">
+        </div>
+
+        <div class="control-group">
+            <h4>Light Position</h4>
+            X: <input type="range" min="-400" max="300" value="0" class="slider" id="light-x"><br>
+            Y: <input type="range" min="-200" max="700" value="-50" class="slider" id="light-y"><br>
+            Z: <input type="range" min="-400" max="400" value="-150" class="slider" id="light-z">
+        </div>
+
+        <div class="control-group">
+          <h4>Light Colors</h4>
+          <label for="ambient-color">Ambient:</label>
+          <input type="color" id="ambient-color" value="#333333"><br>
+          <label for="diffuse-color">Diffuse:</label>
+          <input type="color" id="diffuse-color" value="#ffffff"><br>
+          <label for="specular-color">Specular:</label>
+          <input type="color" id="specular-color" value="#ffffff">
+        </div>
+
+        
+      </aside>
+    </div>
+
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix-cse160.js"></script>
+    <script src="helper/Triangle.js"></script>
+    <script src="helper/Circle.js"></script>
+    <script src="helper/Cube.js"></script>
+    <script src="helper/Pyramid.js"></script>
+    <script src="helper/Sphere.js"></script>
+    <script src="helper/camera.js"></script>
+    <script src="asg4.js"></script>
+  </body>
+</html>

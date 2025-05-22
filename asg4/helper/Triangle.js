@@ -1,0 +1,155 @@
+class Triangle {
+  constructor() {
+      this.type = "triangle";
+      this.position = [0.0, 0.0, 0.0];
+      this.color = [1.0, 1.0, 1.0, 1.0];
+      this.size = 5.0; 
+  }
+
+  render() {
+      var xy = this.position;
+      var rgba = this.color;
+      var size = this.size;
+  
+      gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
+      gl.uniform1f(u_Size, size);
+  
+      let delta = this.size/200.0;
+      drawTriangle([xy[0], xy[1], xy[0] - delta/2, xy[1] - delta*Math.sqrt(3)/2, xy[0] + delta/2, xy[1] - delta*Math.sqrt(3)/2]);
+  }
+}
+
+function drawTriangle(vertices) {
+    var n = 3; // Number of vertices
+  
+    //Create a buffer object that lives on the GPU
+    var vertexBuffer = gl.createBuffer();
+    if (!vertexBuffer) {
+      console.log('Failed to create the buffer object');
+      return -1;
+    }
+  
+    // Bind the buffer object to target
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    // Write date into the buffer object (sending the vertices to the GPU/ GLSL)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+
+    // Assign the buffer object to a_Position variable
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+  
+    // Enable the assignment to a_Position variable
+    gl.enableVertexAttribArray(a_Position);
+  
+    gl.drawArrays(gl.TRIANGLES, 0, n);
+}
+
+function drawTriangle3D(vertices, uvs) {
+  const n = vertices.length / 3;
+
+  const vbuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(a_Position);
+
+  if (uvs !== undefined) {
+    const tbuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tbuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_UV);
+  } else {
+    gl.disableVertexAttribArray(a_UV);
+    gl.vertexAttrib2f(a_UV, 0.0, 0.0);  
+  }
+
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  // leave a_UV enabled for subsequent textured draws
+  gl.disableVertexAttribArray(a_UV);
+}
+
+
+
+function drawTriangleColor(vertices, rgba){
+    gl.uniform4f(u_FragColor, rgba[0]/255, rgba[1]/255, rgba[2]/255, rgba[3]);
+
+    var n = 3; 
+
+    //Create a buffer object that lives on the GPU
+    var vertexBuffer = gl.createBuffer();
+    if (!vertexBuffer) {
+      console.log('Failed to create the buffer object');
+      return -1;
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_Position);
+    gl.drawArrays(gl.TRIANGLES, 0, n);
+}
+
+// built for interleaved buffers
+function drawTriangle3DUV(vertices, uv) {
+  var n = 3; // The number of vertices
+
+  let vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+    console.log("Failed to create the vertexBuffer object");
+    return -1;
+  }
+
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(a_Position);
+
+  
+  let UVbuffer = gl.createBuffer();
+  if (!UVbuffer) {
+    console.log("Failed to create the UVbuffer object");
+    return -1;
+  }
+
+  // uv coords
+  gl.bindBuffer(gl.ARRAY_BUFFER, UVbuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv), gl.DYNAMIC_DRAW);
+  
+  gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(a_UV);
+
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+
+}
+
+function drawTriangle3DUVNormal(vbuffer, uvbuffer, nbuffer,
+                                verts, uvs, norms) {
+
+  const n = verts.length / 3;
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(a_Position);
+
+  /* ---------- UVs (optional) ---------- */
+  if (uvs && uvbuffer) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvbuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_UV);
+  } else {
+    // solid-color path: disable and give a default UV
+    gl.disableVertexAttribArray(a_UV);
+    gl.vertexAttrib2f(a_UV, 0.0, 0.0);
+  }
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, nbuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(a_Normal);
+
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+}
