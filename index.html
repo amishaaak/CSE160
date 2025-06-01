@@ -1,21 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amisha Kandi CSE 160 Assignments</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amisha Kandi - CSE 160 Assignments</title>
+
+  <!-- Google Font -->
+  <link 
+    rel="preconnect" 
+    href="https://fonts.gstatic.com"
+  />
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" 
+    rel="stylesheet"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Roboto', sans-serif;
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    body {
+      background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden; 
+    }
+
+    header {
+      background-color: #006064;
+      color: #fafafa;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    header p {
+      font-size: 1rem;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    nav {
+      padding: 1.5rem 1rem;
+    }
+    nav ul {
+      list-style: none;
+    }
+    nav li + li {
+      margin-top: 1rem;
+    }
+
+    .assignment-card {
+      display: block;
+      background: #fafafa;
+      border-left: 4px solid #0097a7;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .assignment-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+    .assignment-card span {
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: #004d40;
+    }
+    .assignment-card::after {
+      content: '→';
+      float: right;
+      font-size: 1.2rem;
+      color: #00796b;
+      transition: margin-left 0.15s ease;
+    }
+    .assignment-card:hover::after {
+      margin-left: 4px;
+    }
+
+    @media (max-width: 400px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+      .assignment-card span {
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <a href="https://amishaaak.github.io/CSE160/asg0/asg0.html">Assignment 0</a>
-    <br>
-    <a href="https://amishaaak.github.io/CSE160/asg1/asg1.html">Assignment 1</a>
-    <br>
-    <a href="https://amishaaak.github.io/CSE160/asg2/asg2.html">Assignment 2</a>
-    <br>
-    <a href="https://amishaaak.github.io/CSE160/asg3/asg3.html">Assignment 3</a>
-    <br>
-    <a href="https://amishaaak.github.io/CSE160/asg4/asg4.html">Assignment 4</a>
-    <br>
-    <a href="https://amishaaak.github.io/CSE160/asg5/asg5.html">Assignment 5</a>
+
+  <div class="container">
+    <header>
+      <h1>CSE 160: Computer Graphics</h1>
+      <p>Amisha Kandi’s Assignments</p>
+    </header>
+
+    <nav>
+      <ul>
+        <li>
+          <a 
+            href="https://amishaaak.github.io/CSE160/asg0/asg0.html"
+            class="assignment-card"
+            ><span>Assignment 0</span></a
+          >
+        </li>
+        <li>
+          <a 
+            href="https://amishaaak.github.io/CSE160/asg1/asg1.html"
+            class="assignment-card"
+            ><span>Assignment 1</span></a
+          >
+        </li>
+        <li>
+          <a 
+            href="https://amishaaak.github.io/CSE160/asg2/asg2.html"
+            class="assignment-card"
+            ><span>Assignment 2</span></a
+          >
+        </li>
+        <li>
+          <a 
+            href="https://amishaaak.github.io/CSE160/asg3/asg3.html"
+            class="assignment-card"
+            ><span>Assignment 3</span></a
+          >
+        </li>
+        <li>
+          <a 
+            href="https://amishaaak.github.io/CSE160/asg4/asg4.html"
+            class="assignment-card"
+            ><span>Assignment 4</span></a
+          >
+        </li>
+        <li>
+          <a 
+            href="https://amishaaak.github.io/CSE160/asg5/asg5.html"
+            class="assignment-card"
+            ><span>Assignment 5</span></a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+
 </body>
 </html>
