@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amisha Kandi CSE 160 asg5</title>
+
+    <!-- Import Map for three.js modules -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@v0.163.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.163.0/examples/jsm/"
+      }
+    }
+    </script>
+
+    <!-- Simple styling for the Grader’s Note section -->
+    <style>
+      #grader-note {
+        margin: 1.5em auto;
+        padding: 1em;
+        max-width: 800px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      #grader-note h2 {
+        margin-top: 0;
+        font-size: 1.4em;
+        color: #333;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 0.3em;
+      }
+
+      #grader-note ul {
+        padding-left: 1.2em;
+      }
+
+      #grader-note li {
+        margin: 0.6em 0;
+        color: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Three.js entry point -->
+    <script type="module" src="asg5.js"></script>
+
+    <!-- Canvas for Three.js to render into -->
+    <canvas id="c" width="1495" height="650"></canvas>
+
+    <!-- Grader’s Note Section -->
+    <section id="grader-note">
+      <h2>Notes to Grader</h2>
+      <ul>
+        <li>Ambient blueish-green light used to mimic an underwater scene to make sure nothing is constantly in shadow</li>
+        <li>Directional pale blue light to make sure that surfaces facing the light show bright highlights and there are realistic shadows</li>
+        <li>Spotlight thats's golden in the middle of the scene that also fades away and reappears like a sunlight beam striking the water</li>
+        <li>Seaweed, coral, jellyfish, Spongebob, Patrick, and Squidward are all animated</li>
+        <li>Used ChatGPT to help me algorithmically place the corals to be grouped randomly, the seaweed to be placed around the perimeter, and animation of the jellyfish</li>
+        <li>Got all my 3D objects in this scene from https://sketchfab.com/feed</li>
+      </ul>
+    </section>
+  </body>
+</html>
